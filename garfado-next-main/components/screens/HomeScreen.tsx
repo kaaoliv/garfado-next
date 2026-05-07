@@ -69,7 +69,7 @@ export function HomeScreen({ onOpenModal, onOpenManualAdd }: HomeScreenProps) {
         setSearching(false)
       }
     }, 1200) // 1.2s de debounce para reduzir chamadas
-  }, [searchPlaces, clearSearch, restaurants])
+  }, [searchPlaces, clearSearch, restaurants, userCoords])
 
   const handleManualAdd = async (name: string) => {
     // Adicionar restaurante manualmente sem usar a API do Google
@@ -89,19 +89,32 @@ export function HomeScreen({ onOpenModal, onOpenManualAdd }: HomeScreenProps) {
   }
 
   const handleAddPlace = async (place: typeof searchResults[0]) => {
-    const rid = await addFromPlaces(place)
-    if (rid) {
-      // Limpar busca primeiro
-      setQuery('')
-      clearSearch()
-      // Buscar o restaurante (pode ter sido adicionado agora)
-      const r = restaurants.find(x => x.id === rid) || {
-        id: rid, name: place.name, addr: place.addr,
+    try {
+      setSearching(true)
+      const rid = await addFromPlaces(place)
+      setSearching(false)
+      if (rid) {
+        setQuery('')
+        clearSearch()
+        const r = restaurants.find(x => x.id === rid) || {
+          id: rid, name: place.name, addr: place.addr,
+          rede: 'Outro', rating: place.rating, img: place.photo,
+          hours: '–', place_id: place.placeId || null
+        }
+        setTimeout(() => onOpenModal(r as any), 50)
+      }
+    } catch (e) {
+      console.error('Erro ao adicionar restaurante:', e)
+      setSearching(false)
+      // Fallback: abrir modal com dados básicos do place
+      const fallback = {
+        id: Date.now(), name: place.name, addr: place.addr,
         rede: 'Outro', rating: place.rating, img: place.photo,
         hours: '–', place_id: place.placeId || null
       }
-      // Pequeno delay para garantir que o state foi atualizado
-      setTimeout(() => onOpenModal(r as any), 50)
+      setQuery('')
+      clearSearch()
+      setTimeout(() => onOpenModal(fallback as any), 50)
     }
   }
 
