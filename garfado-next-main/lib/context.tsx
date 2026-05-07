@@ -46,6 +46,7 @@ interface AppActions {
   submitReview: (rid: number, text: string) => Promise<void>
   deleteReview: (id: string, rid: number) => Promise<void>
   finishOnboarding: (username: string, name: string) => Promise<boolean>
+  uploadRestaurantPhoto: (rid: number, file: File) => Promise<boolean>
   signOut: () => Promise<void>
   setProfile: (p: Profile) => void
 }
@@ -370,6 +371,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return true
   }
 
+  const uploadRestaurantPhoto = async (rid: number, file: File): Promise<boolean> => {
+    if (!state.user) return false
+    try {
+      const ext = file.name.split('.').pop() || 'jpg'
+      const path = `restaurants/${rid}.${ext}`
+      const { error } = await supabase.storage.from('restaurant-photos').upload(path, file, { upsert: true })
+      if (error) throw error
+      const { data } = supabase.storage.from('restaurant-photos').getPublicUrl(path)
+      const url = data.publicUrl + '?t=' + Date.now()
+      await supabase.from('restaurants').update({ img: url }).eq('id', rid)
+      setState(s => ({
+        ...s,
+        restaurants: s.restaurants.map(r => r.id === rid ? { ...r, img: url } : r),
+      }))
+      return true
+    } catch (e) { console.error(e); return false }
+  }
+
   const signOut = async () => {
     await supabase.auth.signOut()
   }
@@ -384,7 +403,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       addVisit, toggleLike, setRating, setNote,
       searchPlaces, clearSearch, addFromPlaces, fetchPlacePhoto,
       reactFeed, loadReviews, submitReview, deleteReview,
-      finishOnboarding, signOut, setProfile,
+      finishOnboarding, signOut, setProfile, uploadRestaurantPhoto,
     }}>
       {children}
     </AppContext.Provider>
