@@ -70,6 +70,18 @@ export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps
     setReviews(prev => prev.filter(x => x.id !== id))
   }
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingPhoto(true)
+    const ok = await uploadRestaurantPhoto(r.id, file)
+    setUploadingPhoto(false)
+    if (ok) toast.success('Foto atualizada!')
+    else toast.error('Erro ao enviar foto')
+    // limpar input para permitir re-upload do mesmo arquivo
+    e.target.value = ''
+  }
+
   // Swipe to close
   const onTouchStart = (e: React.TouchEvent) => {
     startY.current = e.touches[0].clientY
