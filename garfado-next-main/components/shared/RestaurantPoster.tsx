@@ -35,23 +35,39 @@ export function RestaurantPoster({ restaurant, className = '' }: { restaurant: R
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ background: bg }}>
       <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-        <rect width="200" height="300" fill={col} opacity="0.08"/>
-        <text x="100" y="115" textAnchor="middle" fontFamily="Arial" fontSize="80" fill={col} opacity="0.3">{ico}</text>
-        <rect x="0" y="145" width="200" height="155" fill="rgba(0,0,0,0.78)"/>
-        <line x1="0" y1="146" x2="200" y2="146" stroke={col} strokeWidth="2" opacity="0.6"/>
-        <text x="100" y="180" textAnchor="middle" fontFamily="Georgia,serif" fontSize="17" fontWeight="700" fill="#ffffff">{name}</text>
-        <text x="100" y="205" textAnchor="middle" fontFamily="Arial" fontSize="9" fill="#8899aa">
-          {restaurant.addr.length > 22 ? restaurant.addr.slice(0, 21) + '…' : restaurant.addr}
-        </text>
+        <defs>
+          <linearGradient id={`g${restaurant.id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={col} stopOpacity="0.15"/>
+            <stop offset="100%" stopColor={col} stopOpacity="0.05"/>
+          </linearGradient>
+        </defs>
+        {/* Fundo com gradiente */}
+        <rect width="200" height="300" fill={`url(#g${restaurant.id})`}/>
+        {/* Padrão sutil */}
+        <circle cx="160" cy="60" r="80" fill={col} opacity="0.06"/>
+        <circle cx="40" cy="240" r="60" fill={col} opacity="0.04"/>
+        {/* Ícone central grande */}
+        <text x="100" y="130" textAnchor="middle" fontFamily="Arial" fontSize="72" opacity="0.25">{ico}</text>
+        {/* Barra inferior */}
+        <rect x="0" y="165" width="200" height="135" fill="rgba(0,0,0,0.82)"/>
+        {/* Linha colorida */}
+        <rect x="0" y="165" width="200" height="3" fill={col} opacity="0.8"/>
+        {/* Tag de rede */}
         {rede && (
           <>
-            <rect x={100 - rede.length * 4 - 8} y="218" width={rede.length * 8 + 16} height="18" rx="9" fill={col} opacity="0.3"/>
-            <rect x={100 - rede.length * 4 - 8} y="218" width={rede.length * 8 + 16} height="18" rx="9" fill="none" stroke={col} strokeWidth="1" opacity="0.7"/>
-            <text x="100" y="230" textAnchor="middle" fontFamily="Arial" fontSize="9.5" fontWeight="700" fill={col}>{rede}</text>
+            <rect x="12" y="178" width={rede.length * 7 + 14} height="16" rx="8" fill={col} opacity="0.25"/>
+            <text x="19" y="190" fontFamily="Arial" fontSize="9" fontWeight="700" fill={col}>{rede.toUpperCase()}</text>
           </>
         )}
+        {/* Nome */}
+        <text x="12" y="218" fontFamily="Georgia,serif" fontSize="16" fontWeight="700" fill="#ffffff">{name}</text>
+        {/* Endereço */}
+        <text x="12" y="235" fontFamily="Arial" fontSize="8.5" fill="#7a8899">
+          {restaurant.addr.length > 26 ? restaurant.addr.slice(0, 25) + '…' : restaurant.addr}
+        </text>
+        {/* Rating */}
         {restaurant.rating && (
-          <text x="100" y="288" textAnchor="middle" fontFamily="Arial" fontSize="10" fill="#FFC72C">★ {restaurant.rating}</text>
+          <text x="12" y="288" fontFamily="Arial" fontSize="11" fill="#FFC72C" fontWeight="600">★ {restaurant.rating}</text>
         )}
       </svg>
     </div>
