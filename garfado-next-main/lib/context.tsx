@@ -302,10 +302,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             'X-Goog-FieldMask': 'photos'
           }
         })
-        const photoData = await photoResp.json()
-        const photoName = photoData.photos?.[0]?.name
-        if (photoName) {
-          photoUrl = `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=600&maxWidthPx=400&key=${GPLACES_KEY}`
+        if (photoResp.ok) {
+          const photoData = await photoResp.json()
+          const photoName = photoData.photos?.[0]?.name
+          if (photoName) {
+            photoUrl = `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=600&maxWidthPx=400&key=${GPLACES_KEY}`
+          }
         }
       } catch { photoUrl = null }
     }
