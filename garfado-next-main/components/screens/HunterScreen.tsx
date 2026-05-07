@@ -6,15 +6,22 @@ import { redeColor, redeEmoji } from '@/lib/constants'
 import { Trophy } from 'lucide-react'
 import type { Restaurant } from '@/lib/types'
 
-const FRANCHISE_REDES = ["mcdonald's", 'burger king', "bob's", 'kfc', 'subway']
+const FRANCHISE_REDES = ["mcdonald's", 'burger king', "bob's", 'kfc', 'subway', 'popeyes']
 
-// Total de unidades no Brasil por rede (fonte: dados públicos 2024)
+// Total de unidades no Brasil por rede (fonte: dados públicos 2025)
+// McDonald's: Exame/Arcos Dorados, mar/2025 — 1.150+ unidades
+// Burger King: Bloomberg Línea Q1/2025 — ~960 unidades (Zamp)
+// Bob's: FoodBiz, jul/2025 — 1.070 unidades
+// KFC: Jornal do Brás, out/2025 — 230+ unidades (meta 500 até 2030)
+// Subway: FoodBiz/Zamp, 2025 — 1.518 unidades
+// Popeyes: ABF Portal do Franchising, dez/2025 — ~100 unidades (em expansão)
 const TOTAL_BRASIL: Record<string, number> = {
-  "mcdonald's": 1055,
-  "burger king": 850,
-  "bob's": 350,
-  "kfc": 320,
-  "subway": 1900,
+  "mcdonald's": 1150,
+  "burger king": 960,
+  "bob's": 1070,
+  "kfc": 260,
+  "subway": 1518,
+  "popeyes": 100,
 }
 
 
