@@ -34,6 +34,17 @@ export function HomeScreen({ onOpenModal, onOpenManualAdd }: HomeScreenProps) {
   const [showSort, setShowSort] = useState(false)
   const [query, setQuery] = useState('')
   const [searching, setSearching] = useState(false)
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null)
+
+  // Pegar localização uma vez ao montar
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {} // silencioso se recusar
+    )
+  }, [])
+
   // Swipe detection para carrossel
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
@@ -54,7 +65,7 @@ export function HomeScreen({ onOpenModal, onOpenManualAdd }: HomeScreenProps) {
       // Só busca no Google se tiver menos de 3 resultados locais
       if (local.length < 3) {
         setSearching(true)
-        await searchPlaces(q)
+        await searchPlaces(q, userCoords || undefined)
         setSearching(false)
       }
     }, 1200) // 1.2s de debounce para reduzir chamadas
@@ -174,8 +185,8 @@ export function HomeScreen({ onOpenModal, onOpenManualAdd }: HomeScreenProps) {
 
             {(searchResults.length > 0 || searching || (query.length >= 4 && !searching)) && (
               <div>
-                <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">
-                  {searching ? 'Buscando no Google...' : 'Adicionar pelo Google'}
+                <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                  {searching ? 'Buscando...' : userCoords ? '📍 Perto de você' : 'Adicionar pelo Google'}
                 </p>
                 {searchResults.length === 0 && !searching && query.length >= 4 && (
                   <button onClick={() => handleManualAdd(query)}
