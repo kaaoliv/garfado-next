@@ -33,12 +33,27 @@ export function HunterScreen({ onOpenModal }: HunterScreenProps) {
   const { restaurants, visits } = useApp()
   const [openRede, setOpenRede] = useState<string | null>(null)
 
+  // Restaurante pertence a uma rede se o campo rede bate OU se o nome contém o nome da rede
+  const redeMatch = (r: { rede: string; name: string }, rede: string) => {
+    const rr = r.rede.toLowerCase().trim()
+    const rn = r.name.toLowerCase()
+    if (rr === rede) return true
+    // fallback: nome do restaurante contém a rede (para restaurantes adicionados antes do detectRede)
+    if (rede === "mcdonald's" && (rn.includes('mcdonald') || rn.includes('méqui'))) return true
+    if (rede === 'burger king' && rn.includes('burger king')) return true
+    if (rede === "bob's" && (rn.includes("bob's") || rn.includes('bobs'))) return true
+    if (rede === 'kfc' && rn.includes('kfc')) return true
+    if (rede === 'subway' && rn.includes('subway')) return true
+    if (rede === 'popeyes' && rn.includes('popeyes')) return true
+    return false
+  }
+
   const redes = FRANCHISE_REDES.filter(rede =>
-    restaurants.filter(r => r.rede.toLowerCase().trim() === rede).length >= 2
+    restaurants.filter(r => redeMatch(r, rede)).length >= 2
   )
 
-  const totalUnidades = redes.reduce((s, rede) => s + restaurants.filter(r => r.rede.toLowerCase().trim() === rede).length, 0)
-  const totalGarfadas = redes.reduce((s, rede) => s + restaurants.filter(r => r.rede.toLowerCase().trim() === rede && (visits[r.id] || 0) > 0).length, 0)
+  const totalUnidades = redes.reduce((s, rede) => s + restaurants.filter(r => redeMatch(r, rede)).length, 0)
+  const totalGarfadas = redes.reduce((s, rede) => s + restaurants.filter(r => redeMatch(r, rede) && (visits[r.id] || 0) > 0).length, 0)
   const totalBrasil = redes.reduce((s, rede) => s + (TOTAL_BRASIL[rede] || 0), 0)
   const pctGeral = totalUnidades ? Math.round(totalGarfadas / totalUnidades * 100) : 0
 
@@ -80,7 +95,7 @@ export function HunterScreen({ onOpenModal }: HunterScreenProps) {
         <h2 className="font-serif text-lg font-semibold mb-3">Franquias</h2>
         <div className="flex flex-col gap-3">
           {redes.map(rede => {
-            const todos = restaurants.filter(r => r.rede.toLowerCase().trim() === rede)
+            const todos = restaurants.filter(r => redeMatch(r, rede))
             const garfadas = todos.filter(r => (visits[r.id] || 0) > 0)
             const totalRef = TOTAL_BRASIL[rede] || todos.length
             const pct = totalRef ? Math.round(garfadas.length / totalRef * 100) : 0
