@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { X, Star, Calendar, Heart, Minus, Plus, Send } from 'lucide-react'
+import { X, Star, Calendar, Heart, Minus, Plus, Send, Camera } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { RestaurantPoster } from '@/components/shared/RestaurantPoster'
 import { ForkIcon } from '@/components/shared/ForkIcon'
@@ -17,9 +17,11 @@ interface RestaurantModalProps {
 
 export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps) {
   const { visits, ratings, likes, visitDates, addVisit, toggleLike, setRating, setNote,
-    loadReviews, submitReview, deleteReview, user, friendVisits } = useApp()
+    loadReviews, submitReview, deleteReview, user, friendVisits, uploadRestaurantPhoto } = useApp()
   const [reviews, setReviews] = useState<Review[]>([])
   const [celebrating, setCelebrating] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const photoInputRef = useRef<HTMLInputElement>(null)
   const [priceLevel, setPriceLevel] = useState<number>(0)
   const [reviewText, setReviewText] = useState('')
   const [notaColetiva, setNotaColetiva] = useState<string | null>(null)
@@ -159,6 +161,16 @@ export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps
             <button onClick={onClose} aria-label="Fechar" className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center touch-manipulation">
               <X className="w-4 h-4 text-white" />
             </button>
+            <button onClick={() => photoInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              aria-label="Adicionar foto"
+              className="absolute top-4 left-4 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center touch-manipulation">
+              {uploadingPhoto
+                ? <span className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
+                : <Camera className="w-4 h-4 text-white" />
+              }
+            </button>
+            <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
             {garfado && (
               <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-4 py-1.5 rounded-b-xl uppercase tracking-wider">
                 ✓ garfado
