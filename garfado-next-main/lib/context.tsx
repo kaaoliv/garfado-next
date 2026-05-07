@@ -37,7 +37,7 @@ interface AppActions {
   toggleLike: (rid: number) => Promise<void>
   setRating: (rid: number, field: string, val: number) => Promise<void>
   setNote: (rid: number, nota: string) => Promise<void>
-  searchPlaces: (q: string) => Promise<void>
+  searchPlaces: (q: string, coords?: { lat: number; lng: number }) => Promise<void>
   clearSearch: () => void
   addFromPlaces: (place: PlaceResult) => Promise<number | null>
   fetchPlacePhoto: (r: Restaurant) => Promise<void>
@@ -221,9 +221,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, { onConflict: 'user_id,restaurant_id' })
   }
 
-  const searchPlaces = async (q: string) => {
+  const searchPlaces = async (q: string, coords?: { lat: number; lng: number }) => {
     if (!q || q.length < 2) { update({ searchResults: [] }); return }
-    const cacheKey = q.trim().toLowerCase()
+    // Cache key inclui localização aproximada (arredonda ~1km) para resultados relevantes por área
+    const locKey = coords ? `@${Math.round(coords.lat * 100) / 100},${Math.round(coords.lng * 100) / 100}` : ''
+    const cacheKey = q.trim().toLowerCase() + locKey
     try {
       // 1. Verificar cache no Supabase primeiro
       const { data: cached } = await supabase
@@ -237,7 +239,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      // 2. Só chama Google se não tiver no cache
+      // 2. Montar body — com locationBias se tiver coordenadas
+      const body: Record<string, any> = {
+        textQuery: q + ' restaurante',
+        languageCode: 'pt-BR', regionCode: 'BR', maxResultCount: 5
+      }
+      if (coords) {
+        // locationBias: prioriza resultados próximos, mas não exclui os demais
+        body.locationBias = {
+          circle: {
+            center: { latitude: coords.lat, longitude: coords.lng },
+            radius: 5000 // 5km de raio
+          }
+        }
+      }
+
+      // 3. Só chama Google se não tiver no cache
       const resp = await fetch('https://places.googleapis.com/v1/places:searchText', {
         method: 'POST',
         headers: {
@@ -245,21 +262,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           'X-Goog-Api-Key': GPLACES_KEY,
           'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress'
         },
-        body: JSON.stringify({
-          textQuery: q + ' restaurante Brasil',
-          languageCode: 'pt-BR', regionCode: 'BR', maxResultCount: 5
-        }),
+        body: JSON.stringify(body),
       })
       const data = await resp.json()
       const results: PlaceResult[] = (data.places || []).map((p: any) => ({
         placeId: p.id,
         name: p.displayName?.text || '',
         addr: p.formattedAddress || '',
-        rating: null, // rating removido — campo cobrado
+        rating: null,
         photo: null,
       }))
 
-      // 3. Salvar no cache para futuras buscas
+      // 4. Salvar no cache para futuras buscas
       if (results.length > 0) {
         await supabase.from('places_cache').upsert({
           query: cacheKey,
