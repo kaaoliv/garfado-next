@@ -8,6 +8,7 @@ export const REDE_COLORS: Record<string, string> = {
   "bob's": '#003087',
   'kfc': '#e4002b',
   'subway': '#009B48',
+  'popeyes': '#F28C00',
   'pizzaria': '#cc3300',
   'hamburgueria': '#8B4513',
   'bar': '#7c3aed',
@@ -20,6 +21,7 @@ export const REDE_EMOJIS: Record<string, string> = {
   "bob's": '🧃',
   'kfc': '🍗',
   'subway': '🥖',
+  'popeyes': '🍗',
 }
 
 export function bk(rede: string) {
@@ -41,6 +43,7 @@ export function detectRede(name: string): string {
   if (n.includes("bob's") || n.includes("bobs")) return "Bob's"
   if (n.includes("kfc")) return "KFC"
   if (n.includes("subway")) return "Subway"
+  if (n.includes("popeyes")) return "Popeyes"
   if (n.includes("pizz")) return "Pizzaria"
   if (n.includes("hamburguer") || n.includes("smash") || n.includes("burger")) return "Hamburgueria"
   if (n.includes("bar ") || n.startsWith("bar") || n.includes("boteco")) return "Bar"
