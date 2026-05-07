@@ -60,7 +60,10 @@ export default function GarfadoApp() {
       <main className="flex-1 overflow-hidden flex flex-col">
         {tab === 'visitados' && <HomeScreen onOpenModal={setModal} />}
         {tab === 'hunter' && <HunterScreen onOpenModal={setModal} />}
-        {tab === 'mapa' && <MapaScreen onOpenModal={setModal} />}
+        {/* MapaScreen fica sempre montado — só esconde com CSS para preservar o estado do mapa */}
+        <div className={tab === 'mapa' ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
+          <MapaScreen onOpenModal={setModal} />
+        </div>
         {tab === 'amigos' && <AmigosScreen onOpenModal={setModal} onViewProfile={setViewingUserId} />}
         {tab === 'perfil' && <PerfilScreen onOpenModal={setModal} />}
       </main>
