@@ -104,24 +104,33 @@ export function MapaScreen({ onOpenModal }: MapaScreenProps) {
     if (loading || !mapContainerRef.current || mapReady) return
     const initMap = async () => {
       const L = (await import('leaflet')).default
-      await import('leaflet/dist/leaflet.css')
       if (mapRef.current) return
 
       const map = L.map(mapContainerRef.current!, {
         center: [-23.5505, -46.6333] as [number, number],
         zoom: 12,
         zoomControl: false,
-        attributionControl: false, // removemos o attribution nativo
+        attributionControl: false,
+        preferCanvas: true, // melhor performance em mobile
       })
 
-      // Tile escuro estilo Carto — combina com o dark mode do app
+      // Tile escuro Carto — gratuito, dark mode nativo
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         subdomains: 'abcd',
+        crossOrigin: true,
       }).addTo(map)
 
       mapRef.current = map
-      setMapReady(true)
+      // Expõe instância para o page.tsx chamar invalidateSize ao voltar para aba
+      ;(window as any).__garfadoMap = map
+
+      // Crítico: invalidateSize força o Leaflet a recalcular
+      // dimensões depois que o container foi pintado no DOM
+      setTimeout(() => {
+        map.invalidateSize({ animate: false })
+        setMapReady(true)
+      }, 100)
     }
     initMap()
     return () => {
