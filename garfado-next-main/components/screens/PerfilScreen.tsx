@@ -25,6 +25,7 @@ export function PerfilScreen({ onOpenModal }: PerfilScreenProps) {
     restaurants, signOut, setProfile } = useApp()
 
   const [tab, setTab] = useState<'garfados' | 'listas' | 'conquistas'>('garfados')
+  const [showAllGarfados, setShowAllGarfados] = useState(false)
   const [editing, setEditing] = useState(false)
   const [achTooltip, setAchTooltip] = useState<string | null>(null)
   const [editName, setEditName] = useState(profile?.name || '')
@@ -224,28 +225,104 @@ export function PerfilScreen({ onOpenModal }: PerfilScreenProps) {
           ))}
         </div>
 
-        {/* Tab: Garfados — grade de posters estilo Letterboxd */}
+        {/* Tab: Garfados — estilo Letterboxd com preview + "ver todos" */}
         {tab === 'garfados' && (
           <>
-            {allVisited.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
-                <p className="font-serif text-base text-muted-foreground">Nenhum restaurante garfado ainda</p>
+            {/* Tela fullscreen de todos os garfados */}
+            {showAllGarfados ? (
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <button onClick={() => setShowAllGarfados(false)} className="touch-manipulation">
+                    <ChevronRight className="w-5 h-5 text-muted-foreground rotate-180" />
+                  </button>
+                  <div>
+                    <h3 className="font-serif text-base font-bold">Todos os garfados</h3>
+                    <p className="text-xs text-muted-foreground">{allVisited.length} restaurantes</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {allVisited.map(r => (
+                    <button key={r.id} onClick={() => onOpenModal(r)}
+                      className="relative rounded-lg overflow-hidden touch-manipulation active:opacity-80"
+                      style={{ aspectRatio: '2/3' }}>
+                      <RestaurantPoster restaurant={r} className="w-full h-full" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      {(visits[r.id] || 0) > 1 && (
+                        <div className="absolute bottom-1 right-1 bg-black/80 text-primary text-[8px] px-1 py-0.5 rounded-full font-bold">
+                          {visits[r.id]}x
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
-              <div className="grid grid-cols-4 gap-1.5">
-                {allVisited.map(r => (
-                  <button key={r.id} onClick={() => onOpenModal(r)}
-                    className="relative rounded-lg overflow-hidden touch-manipulation active:opacity-80"
-                    style={{ aspectRatio: '2/3' }}>
-                    <RestaurantPoster restaurant={r} className="w-full h-full" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    {(visits[r.id] || 0) > 1 && (
-                      <div className="absolute bottom-1 right-1 bg-black/80 text-primary text-[8px] px-1 py-0.5 rounded-full font-bold">
-                        {visits[r.id]}x
+              /* Preview estilo Letterboxd — só mostra seções resumidas */
+              <div className="flex flex-col gap-5">
+                {allVisited.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+                    <p className="font-serif text-base text-muted-foreground">Nenhum restaurante garfado ainda</p>
+                  </div>
+                ) : (
+                  <>
+                    {/* Recentes */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Recentes</p>
+                        <button onClick={() => setShowAllGarfados(true)}
+                          className="text-xs text-primary touch-manipulation flex items-center gap-0.5">
+                          Ver todos ({allVisited.length}) <ChevronRight className="w-3 h-3" />
+                        </button>
                       </div>
-                    )}
-                  </button>
-                ))}
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {allVisited.slice(0, 8).map(r => (
+                          <button key={r.id} onClick={() => onOpenModal(r)}
+                            className="relative rounded-lg overflow-hidden touch-manipulation active:opacity-80"
+                            style={{ aspectRatio: '2/3' }}>
+                            <RestaurantPoster restaurant={r} className="w-full h-full" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                            {(visits[r.id] || 0) > 1 && (
+                              <div className="absolute bottom-1 right-1 bg-black/80 text-primary text-[8px] px-1 py-0.5 rounded-full font-bold">
+                                {visits[r.id]}x
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Mais visitados */}
+                    {(() => {
+                      const top = [...allVisited].sort((a, b) => (visits[b.id] || 0) - (visits[a.id] || 0)).filter(r => (visits[r.id] || 0) > 1).slice(0, 4)
+                      if (top.length === 0) return null
+                      return (
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-2">Mais visitados</p>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {top.map(r => (
+                              <button key={r.id} onClick={() => onOpenModal(r)}
+                                className="relative rounded-lg overflow-hidden touch-manipulation active:opacity-80"
+                                style={{ aspectRatio: '2/3' }}>
+                                <RestaurantPoster restaurant={r} className="w-full h-full" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                <div className="absolute bottom-1 right-1 bg-primary text-primary-foreground text-[8px] px-1 py-0.5 rounded-full font-bold">
+                                  {visits[r.id]}x
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    })()}
+
+                    {/* Ver todos — botão Letterboxd style */}
+                    <button onClick={() => setShowAllGarfados(true)}
+                      className="w-full py-3 rounded-xl border border-border text-sm text-muted-foreground touch-manipulation hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-2">
+                      Ver todos os {allVisited.length} garfados
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </>

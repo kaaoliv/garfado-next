@@ -218,14 +218,18 @@ export function HomeScreen({ onOpenModal }: HomeScreenProps) {
               </div>
             )}
 
-            {/* Últimas garfadas — máx 6 */}
+            {/* Últimas garfadas — carrossel horizontal */}
             {recentVisited.length > 0 && (
               <div className="mb-6">
                 <h2 className="font-serif text-base font-semibold px-4 mb-3">Últimas garfadas</h2>
-                <div className="grid grid-cols-3 gap-2 px-4">
+                <div className="flex gap-3 overflow-x-auto pb-2 px-4 scrollbar-hide">
                   {recentVisited.map(r => (
-                    <button key={r.id} onClick={() => onOpenModal(r)}
-                      className="relative rounded-xl overflow-hidden touch-manipulation active:opacity-80"
+                    <button key={r.id}
+                      onTouchStart={e => { touchStartX.current = e.touches[0].clientX; touchStartY.current = e.touches[0].clientY; isDragging.current = false }}
+                      onTouchMove={e => { if (Math.abs(e.touches[0].clientX - touchStartX.current) > 8) isDragging.current = true }}
+                      onTouchEnd={() => { if (!isDragging.current) onOpenModal(r) }}
+                      onClick={() => { if (!isDragging.current) onOpenModal(r) }}
+                      className="relative w-24 shrink-0 rounded-xl overflow-hidden touch-manipulation"
                       style={{ aspectRatio: '3/4' }}>
                       <RestaurantPoster restaurant={r} className="w-full h-full" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -233,7 +237,7 @@ export function HomeScreen({ onOpenModal }: HomeScreenProps) {
                         <ForkIcon className="w-2.5 h-2.5 text-primary-foreground" />
                       </div>
                       {(visits[r.id] || 0) > 1 && (
-                        <div className="absolute bottom-6 right-1.5 bg-black/70 text-[#FFC72C] text-[8px] px-1.5 py-0.5 rounded-full">
+                        <div className="absolute bottom-6 right-1.5 bg-black/70 text-primary text-[8px] px-1.5 py-0.5 rounded-full font-bold">
                           {visits[r.id]}x
                         </div>
                       )}
