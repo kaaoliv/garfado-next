@@ -1,5 +1,6 @@
 'use client'
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { Search, X } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { RestaurantPoster } from '@/components/shared/RestaurantPoster'
@@ -185,57 +186,87 @@ export function HomeScreen({ onOpenModal }: HomeScreenProps) {
           <>
             {/* Amigos foram aqui */}
             {friendStrip.length > 0 && (
-              <div className="mb-6">
+              <motion.div
+                className="mb-6"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
                 <h2 className="font-serif text-base font-semibold px-4 mb-3">Amigos foram aqui</h2>
                 <div className="flex gap-3 overflow-x-auto pb-2 px-4 scrollbar-hide">
-                  {friendStrip.map(r => {
+                  {friendStrip.map((r, index) => {
                     const fw = friendVisits[r.id] || []
                     const f = fw[0]
                     return (
-                      <button key={r.id}
+                      <motion.button
+                        key={r.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                        whileTap={{ scale: 0.95 }}
                         onTouchStart={e => { touchStartX.current = e.touches[0].clientX; touchStartY.current = e.touches[0].clientY; isDragging.current = false }}
                         onTouchMove={e => { if (Math.abs(e.touches[0].clientX - touchStartX.current) > 8) isDragging.current = true }}
                         onTouchEnd={() => { if (!isDragging.current) onOpenModal(r) }}
                         onClick={() => { if (!isDragging.current) onOpenModal(r) }}
-                        className="relative w-24 shrink-0 rounded-xl overflow-hidden touch-manipulation"
+                        className="relative w-24 shrink-0 rounded-xl overflow-hidden touch-manipulation shadow-soft"
                         style={{ aspectRatio: '3/4' }}>
                         <RestaurantPoster restaurant={r} className="w-full h-full" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                        <div className="absolute top-2 left-2 w-8 h-8 rounded-full overflow-hidden outline-2 outline-primary outline flex-shrink-0 bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
+                        <motion.div
+                          className="absolute top-2 left-2 w-8 h-8 rounded-full overflow-hidden outline-2 outline-primary outline flex-shrink-0 bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.3, delay: index * 0.05 + 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+                        >
                           {f?.avatar
                             ? <img src={f.avatar} alt={f?.name || ''} className="w-full h-full object-cover" />
                             : (f?.name || '?').charAt(0).toUpperCase()
                           }
-                        </div>
+                        </motion.div>
                         <div className="absolute bottom-0 left-0 right-0 p-2">
                           <h3 className="font-serif text-[10px] font-semibold text-white leading-tight truncate">{r.name}</h3>
                           {f && <p className="text-[9px] text-primary mt-0.5">{f.name.split(' ')[0]}</p>}
                         </div>
-                      </button>
+                      </motion.button>
                     )
                   })}
                 </div>
-              </div>
+              </motion.div>
             )}
 
-            {/* Últimas garfadas — carrossel horizontal */}
+            {/* Ultimas garfadas — carrossel horizontal */}
             {recentVisited.length > 0 && (
-              <div className="mb-6">
-                <h2 className="font-serif text-base font-semibold px-4 mb-3">Últimas garfadas</h2>
+              <motion.div
+                className="mb-6"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <h2 className="font-serif text-base font-semibold px-4 mb-3">Ultimas garfadas</h2>
                 <div className="flex gap-3 overflow-x-auto pb-2 px-4 scrollbar-hide">
-                  {recentVisited.map(r => (
-                    <button key={r.id}
+                  {recentVisited.map((r, index) => (
+                    <motion.button
+                      key={r.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                      whileTap={{ scale: 0.95 }}
                       onTouchStart={e => { touchStartX.current = e.touches[0].clientX; touchStartY.current = e.touches[0].clientY; isDragging.current = false }}
                       onTouchMove={e => { if (Math.abs(e.touches[0].clientX - touchStartX.current) > 8) isDragging.current = true }}
                       onTouchEnd={() => { if (!isDragging.current) onOpenModal(r) }}
                       onClick={() => { if (!isDragging.current) onOpenModal(r) }}
-                      className="relative w-24 shrink-0 rounded-xl overflow-hidden touch-manipulation"
+                      className="relative w-24 shrink-0 rounded-xl overflow-hidden touch-manipulation shadow-soft"
                       style={{ aspectRatio: '3/4' }}>
                       <RestaurantPoster restaurant={r} className="w-full h-full" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                      <motion.div
+                        className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 + 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+                      >
                         <ForkIcon className="w-2.5 h-2.5 text-primary-foreground" />
-                      </div>
+                      </motion.div>
                       {(visits[r.id] || 0) > 1 && (
                         <div className="absolute bottom-6 right-1.5 bg-black/70 text-primary text-[8px] px-1.5 py-0.5 rounded-full font-bold">
                           {visits[r.id]}x
@@ -244,20 +275,30 @@ export function HomeScreen({ onOpenModal }: HomeScreenProps) {
                       <div className="absolute bottom-0 left-0 right-0 p-2">
                         <h3 className="font-serif text-[10px] font-semibold text-white leading-tight truncate">{r.name}</h3>
                       </div>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {recentVisited.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-16 px-8 text-center gap-4">
-                <ForkIcon className="w-12 h-16 text-muted-foreground/30" />
+              <motion.div
+                className="flex flex-col items-center justify-center py-16 px-8 text-center gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <ForkIcon className="w-12 h-16 text-muted-foreground/30" />
+                </motion.div>
                 <div>
                   <p className="font-serif text-lg font-semibold text-foreground mb-1">Nenhum lugar garfado ainda</p>
                   <p className="text-sm text-muted-foreground">Use a busca acima para adicionar seu primeiro restaurante</p>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* Destaques */}

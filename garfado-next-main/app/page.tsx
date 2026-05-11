@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '@/lib/context'
 import dynamic from 'next/dynamic'
 const LoadingScreen = dynamic(() => import('@/components/shared/LoadingScreen').then(m => ({ default: m.LoadingScreen })), { ssr: false })
@@ -52,20 +53,44 @@ export default function GarfadoApp() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden h-full">
       {/* Topbar */}
-      <header className="flex-shrink-0 flex items-center justify-between px-4 pt-12 pb-3">
+      <motion.header
+        className="flex-shrink-0 flex items-center justify-between px-4 pt-12 pb-3"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="flex items-center gap-2">
-          <ForkIcon className="w-5 h-6 text-primary" />
-          <span className="font-serif text-xl font-bold">{TAB_TITLES[tab]}</span>
+          <motion.div
+            animate={{ rotate: [0, -5, 5, 0] }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <ForkIcon className="w-5 h-6 text-primary" />
+          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={tab}
+              className="font-serif text-xl font-bold"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              {TAB_TITLES[tab]}
+            </motion.span>
+          </AnimatePresence>
         </div>
-        <button onClick={() => setTab('perfil')}
+        <motion.button
+          onClick={() => setTab('perfil')}
           aria-label="Ver perfil"
-          className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground overflow-hidden outline-2 outline-primary/50 outline touch-manipulation">
+          className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground overflow-hidden outline-2 outline-primary/50 outline touch-manipulation"
+          whileTap={{ scale: 0.9 }}
+        >
           {profile?.avatar_url
             ? <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
             : (profile?.name || 'G').charAt(0).toUpperCase()
           }
-        </button>
-      </header>
+        </motion.button>
+      </motion.header>
 
       {/* Content */}
       <main className="flex-1 overflow-hidden flex flex-col">

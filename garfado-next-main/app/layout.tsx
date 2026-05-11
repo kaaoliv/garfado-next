@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import 'leaflet/dist/leaflet.css'
 import { AppProvider } from '@/lib/context'
+import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
@@ -34,16 +35,21 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className="dark">
-      <body className="bg-[#0f1117] flex items-center justify-center h-screen overflow-hidden">
-        <div className="w-full max-w-[390px] h-screen relative bg-[#0f1117] flex flex-col overflow-hidden">
-          <AppProvider>
-            {children}
-          </AppProvider>
-          <Toaster theme="dark" position="top-center"
-            toastOptions={{ style: { background: '#1a1d24', border: '1px solid #2a2d35', color: '#f5f5f7' } }}
-          />
-        </div>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className="bg-background flex items-center justify-center h-screen overflow-hidden transition-colors duration-300">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange={false}
+        >
+          <div className="w-full max-w-[390px] h-screen relative bg-background flex flex-col overflow-hidden transition-colors duration-300">
+            <AppProvider>
+              {children}
+            </AppProvider>
+            <Toaster position="top-center" />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )

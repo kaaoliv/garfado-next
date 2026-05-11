@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X, Star, Calendar, Heart, Minus, Plus, Send, Camera } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { RestaurantPoster } from '@/components/shared/RestaurantPoster'
@@ -105,11 +106,31 @@ export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div
-        className="relative animate-slide-up bg-[#0f1117] rounded-t-2xl max-h-[90vh] flex flex-col"
-        style={{ transform: dragY > 0 ? `translateY(${dragY}px)` : undefined, transition: dragging ? 'none' : 'transform 0.3s ease' }}
+    <motion.div
+      className="fixed inset-0 z-50 flex flex-col justify-end"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      />
+      <motion.div
+        className="relative bg-background rounded-t-2xl max-h-[90vh] flex flex-col shadow-soft"
+        initial={{ y: '100%' }}
+        animate={{ y: dragY > 0 ? dragY : 0 }}
+        exit={{ y: '100%' }}
+        transition={{
+          type: 'spring',
+          damping: 30,
+          stiffness: 300,
+          ...(dragging && { duration: 0 })
+        }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -404,7 +425,7 @@ export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps
 
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { ForkIcon } from '@/components/shared/ForkIcon'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
@@ -22,39 +23,71 @@ export function AuthScreen() {
     }
   }
 
+  const features = [
+    { ico: '◎', text: 'Marque os restaurantes que voce foi' },
+    { ico: '⭐', text: 'Avalie e deixe reviews publicos' },
+    { ico: '👥', text: 'Veja o que seus amigos estao garfando' },
+    { ico: '🎯', text: 'Cace todas as unidades das suas franquias' },
+  ]
+
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-8 gap-8" aria-label="Tela de login">
-      <div className="flex flex-col items-center gap-4">
-        <ForkIcon className="w-14 h-20 text-primary" />
+      <motion.div
+        className="flex flex-col items-center gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <ForkIcon className="w-14 h-20 text-primary" />
+        </motion.div>
         <h1 className="font-serif text-4xl font-bold">garfado</h1>
         <p className="text-sm text-muted-foreground text-center leading-relaxed">
-          Registre, avalie e descubra os melhores restaurantes que você já foi
+          Registre, avalie e descubra os melhores restaurantes que voce ja foi
         </p>
-      </div>
+      </motion.div>
 
-      <ul className="w-full flex flex-col gap-3 list-none p-0 m-0" role="list" aria-label="Funcionalidades do app">
-        {[
-          { ico: '◎', text: 'Marque os restaurantes que você foi' },
-          { ico: '⭐', text: 'Avalie e deixe reviews públicos' },
-          { ico: '👥', text: 'Veja o que seus amigos estão garfando' },
-          { ico: '🎯', text: 'Caçe todas as unidades das suas franquias' },
-        ].map(f => (
-          <li key={f.ico} className="flex items-center gap-3 text-sm text-muted-foreground">
+      <motion.ul
+        className="w-full flex flex-col gap-3 list-none p-0 m-0"
+        role="list"
+        aria-label="Funcionalidades do app"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        {features.map((f, i) => (
+          <motion.li
+            key={f.ico}
+            className="flex items-center gap-3 text-sm text-muted-foreground"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
             <span className="text-lg w-7 text-center flex-shrink-0" aria-hidden="true">{f.ico}</span>
             <span>{f.text}</span>
-          </li>
+          </motion.li>
         ))}
-      </ul>
+      </motion.ul>
 
-      <div className="w-full flex flex-col gap-3">
-        <button
+      <motion.div
+        className="w-full flex flex-col gap-3"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+      >
+        <motion.button
           onClick={handleGoogle}
           disabled={loading}
           aria-label="Entrar no Garfado com sua conta Google"
-          className="w-full flex items-center justify-center gap-3 py-4 bg-white text-gray-800 rounded-2xl font-semibold text-sm disabled:opacity-60 active:scale-[0.98] transition-all shadow-sm"
+          className="w-full flex items-center justify-center gap-3 py-4 bg-card text-foreground rounded-2xl font-semibold text-sm disabled:opacity-60 shadow-soft border border-border"
+          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.01 }}
         >
           {loading ? (
-            <span className="w-5 h-5 border-2 border-gray-400 border-t-gray-800 rounded-full animate-spin" />
+            <span className="w-5 h-5 border-2 border-muted-foreground border-t-primary rounded-full animate-spin" />
           ) : (
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -64,11 +97,11 @@ export function AuthScreen() {
             </svg>
           )}
           <span>{loading ? 'Conectando...' : 'Continuar com Google'}</span>
-        </button>
+        </motion.button>
         <p className="text-center text-xs text-muted-foreground">
-          Ao entrar, você concorda com os termos de uso do Garfado
+          Ao entrar, voce concorda com os termos de uso do Garfado
         </p>
-      </div>
+      </motion.div>
     </main>
   )
 }

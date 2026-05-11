@@ -1,11 +1,13 @@
 'use client'
 import { useState, useRef } from 'react'
+import { useTheme } from 'next-themes'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '@/lib/context'
 import { ACHIEVEMENTS } from '@/lib/constants'
 import { RestaurantPoster } from '@/components/shared/RestaurantPoster'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
-import { Camera, LogOut, Lock, Globe, Plus, X, ChevronRight } from 'lucide-react'
+import { Camera, LogOut, Lock, Globe, Plus, X, ChevronRight, Sun, Moon } from 'lucide-react'
 import type { Restaurant } from '@/lib/types'
 
 interface PerfilScreenProps {
@@ -21,6 +23,7 @@ interface Lista {
 }
 
 export function PerfilScreen({ onOpenModal }: PerfilScreenProps) {
+  const { theme, setTheme } = useTheme()
   const { profile, visits, visitDates, ratings, likes, achs, friends, followers,
     restaurants, signOut, setProfile } = useApp()
 
@@ -505,13 +508,70 @@ export function PerfilScreen({ onOpenModal }: PerfilScreenProps) {
           </div>
         )}
 
-        {/* Sign out */}
-        <div className="mt-8">
-          <button onClick={signOut}
-            className="w-full py-3 flex items-center justify-center gap-2 rounded-xl border border-border text-sm text-muted-foreground touch-manipulation active:bg-secondary">
+        {/* Configuracoes */}
+        <div className="mt-8 flex flex-col gap-3">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-1">Configuracoes</p>
+          
+          {/* Theme Toggle */}
+          <motion.button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="w-full py-3.5 px-4 flex items-center justify-between rounded-xl bg-card border border-border touch-manipulation"
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="flex items-center gap-3">
+              <motion.div
+                className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center"
+                animate={{ rotate: theme === 'dark' ? 0 : 180 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <AnimatePresence mode="wait">
+                  {theme === 'dark' ? (
+                    <motion.div
+                      key="moon"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Moon className="w-4 h-4 text-primary" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="sun"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Sun className="w-4 h-4 text-accent" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">Aparencia</p>
+                <p className="text-xs text-muted-foreground">{theme === 'dark' ? 'Tema escuro' : 'Tema claro'}</p>
+              </div>
+            </div>
+            <div className="w-12 h-7 rounded-full bg-secondary p-1 relative">
+              <motion.div
+                className="w-5 h-5 rounded-full bg-primary shadow-sm"
+                animate={{ x: theme === 'dark' ? 0 : 20 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </div>
+          </motion.button>
+
+          {/* Sign out */}
+          <motion.button
+            onClick={signOut}
+            className="w-full py-3.5 flex items-center justify-center gap-2 rounded-xl border border-border text-sm text-muted-foreground touch-manipulation"
+            whileTap={{ scale: 0.98 }}
+            whileHover={{ backgroundColor: 'var(--secondary)' }}
+          >
             <LogOut className="w-4 h-4" />
             Sair da conta
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
