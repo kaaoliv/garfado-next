@@ -101,22 +101,31 @@ export function HomeScreen({ onOpenModal }: HomeScreenProps) {
       <div className="flex-1 overflow-y-auto scrollbar-hide">
 
         {/* Search */}
-        <div className="px-4 pb-3 pt-1">
-          <div className="relative">
+        <div className="px-4 pb-4 pt-1">
+          <motion.div
+            className="relative"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <input
               type="search"
               value={query}
               onChange={e => handleSearch(e.target.value)}
               placeholder="Buscar ou adicionar restaurante..."
-              className="w-full bg-card rounded-xl py-3 pl-11 pr-10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 border-none"
+              className="w-full bg-card rounded-2xl py-3.5 pl-11 pr-10 text-sm text-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all shadow-soft"
             />
             {query && (
-              <button onClick={() => { setQuery(''); clearSearch() }} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+              <motion.button
+                onClick={() => { setQuery(''); clearSearch() }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-secondary transition-colors"
+                whileTap={{ scale: 0.9 }}
+              >
                 <X className="w-4 h-4" />
-              </button>
+              </motion.button>
             )}
-          </div>
+          </motion.div>
         </div>
 
         {/* Search results */}

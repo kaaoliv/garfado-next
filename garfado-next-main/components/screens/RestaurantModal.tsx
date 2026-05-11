@@ -190,7 +190,7 @@ export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps
           {/* Hero */}
           <div className="relative h-56">
             <RestaurantPoster restaurant={r} className="w-full h-full" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0f1117] via-black/30 to-transparent" />
+            <div className="absolute inset-0 hero-gradient" />
             <button onClick={onClose} aria-label="Fechar" className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center touch-manipulation">
               <X className="w-4 h-4 text-white" />
             </button>
@@ -218,30 +218,43 @@ export function RestaurantModal({ restaurant: r, onClose }: RestaurantModalProps
           <div className="p-5 flex flex-col gap-5">
 
             {/* Garfar button */}
-            <button onClick={async () => {
-        const wasZero = (visits[r.id] || 0) === 0
-        await addVisit(r.id, 1)
-        if (wasZero) { setCelebrating(true); setTimeout(() => setCelebrating(false), 1800) }
-      }}
-              className={`w-full py-4 rounded-xl font-semibold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all ${
-                garfado ? 'bg-card text-primary border border-primary' : 'bg-primary text-primary-foreground'
-              }`}>
+            <motion.button
+              onClick={async () => {
+                const wasZero = (visits[r.id] || 0) === 0
+                await addVisit(r.id, 1)
+                if (wasZero) { setCelebrating(true); setTimeout(() => setCelebrating(false), 1800) }
+              }}
+              className={`w-full py-4 rounded-2xl font-semibold text-base flex items-center justify-center gap-2.5 transition-all shadow-soft ${
+                garfado ? 'bg-card text-primary border-2 border-primary/30' : 'bg-primary text-primary-foreground'
+              }`}
+              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.01 }}
+            >
               <ForkIcon className="w-5 h-5" />
               {garfado ? `Garfado! + visita` : 'Garfar este lugar'}
-            </button>
+            </motion.button>
 
             {/* Secondary actions */}
             <div className="flex gap-3">
-              <button onClick={() => toggleLike(r.id)}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-medium touch-manipulation ${liked ? 'border-pink-500 text-pink-500' : 'border-border text-muted-foreground'}`}>
-                <Heart className={`w-4 h-4 ${liked ? 'fill-pink-500' : ''}`} />
+              <motion.button
+                onClick={() => toggleLike(r.id)}
+                className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 text-sm font-medium touch-manipulation transition-colors ${
+                  liked ? 'border-accent bg-accent/10 text-accent' : 'border-border bg-card text-muted-foreground hover:border-accent/50'
+                }`}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Heart className={`w-4 h-4 ${liked ? 'fill-accent' : ''}`} />
                 {liked ? 'Favoritado' : 'Favoritar'}
-              </button>
-              <button onClick={() => addVisit(r.id, -1)} disabled={v === 0}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-border text-sm font-medium text-muted-foreground touch-manipulation disabled:opacity-30">
+              </motion.button>
+              <motion.button
+                onClick={() => addVisit(r.id, -1)}
+                disabled={v === 0}
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-border bg-card text-sm font-medium text-muted-foreground touch-manipulation disabled:opacity-30 hover:border-destructive/50"
+                whileTap={{ scale: 0.95 }}
+              >
                 <Minus className="w-4 h-4" />
                 Remover
-              </button>
+              </motion.button>
             </div>
 
             {/* Ratings */}

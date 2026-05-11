@@ -54,22 +54,23 @@ export default function GarfadoApp() {
     <div className="flex-1 flex flex-col overflow-hidden h-full">
       {/* Topbar */}
       <motion.header
-        className="flex-shrink-0 flex items-center justify-between px-4 pt-12 pb-3"
+        className="flex-shrink-0 flex items-center justify-between px-5 pt-14 pb-4"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <motion.div
-            animate={{ rotate: [0, -5, 5, 0] }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ForkIcon className="w-5 h-6 text-primary" />
+            <ForkIcon className="w-4 h-5 text-primary" />
           </motion.div>
           <AnimatePresence mode="wait">
             <motion.span
               key={tab}
-              className="font-serif text-xl font-bold"
+              className="font-serif text-2xl font-bold tracking-tight"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -82,8 +83,9 @@ export default function GarfadoApp() {
         <motion.button
           onClick={() => setTab('perfil')}
           aria-label="Ver perfil"
-          className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground overflow-hidden outline-2 outline-primary/50 outline touch-manipulation"
+          className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background touch-manipulation shadow-soft"
           whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
         >
           {profile?.avatar_url
             ? <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />

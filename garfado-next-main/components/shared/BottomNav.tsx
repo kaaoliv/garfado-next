@@ -19,30 +19,38 @@ const tabs: { id: Tab; Icon: typeof Grid3X3; label: string }[] = [
 
 export function BottomNav({ active, onChange }: BottomNavProps) {
   return (
-    <nav className="flex-shrink-0 flex items-center justify-around border-t border-border bg-nav-bg pb-6 transition-colors duration-300">
+    <nav className="flex-shrink-0 flex items-center justify-around border-t border-border/50 bg-nav-bg/95 backdrop-blur-lg pb-6 pt-1 transition-colors duration-300 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
       {tabs.map(tab => {
         const isActive = active === tab.id
         return (
           <motion.button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className={`flex flex-col items-center gap-1 py-3 px-3 min-w-[56px] touch-manipulation relative ${
-              isActive ? 'text-primary' : 'text-muted-foreground'
+            className={`flex flex-col items-center gap-1.5 py-2.5 px-4 min-w-[60px] touch-manipulation relative rounded-xl transition-colors ${
+              isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
             }`}
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.15 }}
           >
+            {isActive && (
+              <motion.div
+                className="absolute inset-0 bg-primary/10 rounded-xl"
+                layoutId="activeTabBg"
+                initial={false}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              />
+            )}
             <motion.div
+              className="relative z-10"
               animate={{
                 scale: isActive ? 1.1 : 1,
-                y: isActive ? -2 : 0,
               }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              <tab.Icon className="w-5 h-5" />
+              <tab.Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.5]'}`} />
             </motion.div>
             <motion.span
-              className="text-[10px] font-medium"
+              className={`relative z-10 text-[10px] ${isActive ? 'font-semibold' : 'font-medium'}`}
               animate={{
                 opacity: isActive ? 1 : 0.7,
               }}
@@ -50,15 +58,6 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
             >
               {tab.label}
             </motion.span>
-            {isActive && (
-              <motion.div
-                className="absolute -top-px left-1/2 w-8 h-0.5 bg-primary rounded-full"
-                layoutId="activeTab"
-                initial={false}
-                style={{ x: '-50%' }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              />
-            )}
           </motion.button>
         )
       })}

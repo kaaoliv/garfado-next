@@ -198,33 +198,55 @@ export function PerfilScreen({ onOpenModal }: PerfilScreenProps) {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-2 mb-5">
+        <motion.div
+          className="grid grid-cols-4 gap-2 mb-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
           {[
             { label: 'Garfados', value: garfCount },
             { label: 'Visitas', value: totalVisits },
             { label: 'Seguindo', value: friends.length },
             { label: 'Seguidores', value: followers.length },
-          ].map(s => (
-            <div key={s.label} className="bg-card rounded-xl p-3 text-center">
+          ].map((s, i) => (
+            <motion.div
+              key={s.label}
+              className="bg-card rounded-2xl p-3 text-center border border-border shadow-soft"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.15 + i * 0.05 }}
+            >
               <p className="font-serif text-xl font-bold text-primary">{s.value}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">{s.label}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Tabs */}
-        <div className="flex border-b border-border mb-4">
+        <div className="flex border-b border-border mb-5 relative">
           {[
             { id: 'garfados', label: 'Garfados' },
             { id: 'listas', label: 'Listas' },
             { id: 'conquistas', label: 'Conquistas' },
           ].map(t => (
-            <button key={t.id} onClick={() => setTab(t.id as any)}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors touch-manipulation border-b-2 -mb-px ${
-                tab === t.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'
-              }`}>
+            <motion.button
+              key={t.id}
+              onClick={() => setTab(t.id as any)}
+              className={`flex-1 py-3 text-xs font-semibold transition-colors touch-manipulation relative ${
+                tab === t.id ? 'text-primary' : 'text-muted-foreground'
+              }`}
+              whileTap={{ scale: 0.95 }}
+            >
               {t.label}
-            </button>
+              {tab === t.id && (
+                <motion.div
+                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full"
+                  layoutId="profileTab"
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
 

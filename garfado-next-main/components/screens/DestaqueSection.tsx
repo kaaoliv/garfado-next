@@ -1,14 +1,15 @@
 'use client'
 import { useRef } from 'react'
+import { motion } from 'framer-motion'
 import { useApp } from '@/lib/context'
 import { RestaurantPoster } from '@/components/shared/RestaurantPoster'
-import { TrendingUp } from 'lucide-react'
+import { TrendingUp, Flame, Target, Star } from 'lucide-react'
 import type { Restaurant } from '@/lib/types'
 
 const CHALLENGES = [
-  { id: 'c1', ico: '🗺', title: 'Explorador', desc: 'Garfe um lugar novo esta semana', goal: 1 },
-  { id: 'c2', ico: '🔥', title: 'Dupla garfada', desc: 'Garfe 2 lugares novos esta semana', goal: 2 },
-  { id: 'c3', ico: '⭐', title: 'Crítico', desc: 'Avalie 2 restaurantes', goal: 2 },
+  { id: 'c1', Icon: Target, title: 'Explorador', desc: 'Garfe um lugar novo esta semana', goal: 1, color: 'text-primary' },
+  { id: 'c2', Icon: Flame, title: 'Dupla garfada', desc: 'Garfe 2 lugares novos esta semana', goal: 2, color: 'text-accent' },
+  { id: 'c3', Icon: Star, title: 'Critico', desc: 'Avalie 2 restaurantes', goal: 2, color: 'text-chart-4' },
 ]
 
 function getWeekStart() {
@@ -59,10 +60,15 @@ export function DestaqueSection({ onOpenModal }: DestaqueSectionProps) {
     <div className="mt-4">
 
       {/* Desafios da semana */}
-      <div className="px-4 mb-6">
-        <div className="flex items-center justify-between mb-3">
+      <motion.div
+        className="px-4 mb-6"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        <div className="flex items-center justify-between mb-4">
           <h2 className="font-serif text-lg font-semibold">Desafios da semana</h2>
-          <span className="text-xs text-muted-foreground">{timeLeft} restantes</span>
+          <span className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">{timeLeft}</span>
         </div>
         <div className="flex flex-col gap-3">
           {CHALLENGES.map((c, i) => {
@@ -70,52 +76,91 @@ export function DestaqueSection({ onOpenModal }: DestaqueSectionProps) {
             const done = prog >= c.goal
             const pct = Math.round(prog / c.goal * 100)
             return (
-              <div key={c.id} className={`bg-card rounded-xl p-4 border ${done ? 'border-primary/40' : 'border-border'}`}>
+              <motion.div
+                key={c.id}
+                className={`bg-card rounded-2xl p-4 border-2 transition-colors ${done ? 'border-primary/40 bg-primary/5' : 'border-border'}`}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 + i * 0.1 }}
+              >
                 <div className="flex items-start gap-3 mb-3">
-                  <span className="text-2xl flex-shrink-0">{c.ico}</span>
+                  <div className={`w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0 ${c.color}`}>
+                    <c.Icon className="w-5 h-5" />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold">{c.title}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{c.desc}</p>
                   </div>
-                  {done && <span className="text-xl">✅</span>}
+                  {done && (
+                    <motion.div
+                      className="w-6 h-6 rounded-full bg-primary flex items-center justify-center"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                    >
+                      <span className="text-primary-foreground text-xs">✓</span>
+                    </motion.div>
+                  )}
                 </div>
-                <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${done ? 100 : pct}%` }} />
+                <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-primary rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${done ? 100 : pct}%` }}
+                    transition={{ duration: 0.5, delay: 0.4 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  />
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-1.5">
-                  {done ? 'Concluído! 🎉' : `${prog} de ${c.goal}`}
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  {done ? 'Concluido!' : `${prog} de ${c.goal}`}
                 </p>
-              </div>
+              </motion.div>
             )
           })}
         </div>
-      </div>
+      </motion.div>
 
       {/* Em alta */}
       {trendRests.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between px-4 mb-3">
+        <motion.div
+          className="mb-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <div className="flex items-center justify-between px-4 mb-4">
             <h2 className="font-serif text-lg font-semibold">Em alta</h2>
-            <TrendingUp className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1.5 text-accent">
+              <TrendingUp className="w-4 h-4" />
+              <span className="text-xs font-medium">Trending</span>
+            </div>
           </div>
           <div className="flex flex-col gap-2 px-4">
             {trendRests.slice(0, 3).map(({ r, cnt }, i) => (
-              <button key={r.id} onClick={() => onOpenModal(r)}
-                className="flex items-center gap-3 bg-card rounded-xl p-3 touch-manipulation active:opacity-80">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary text-sm flex-shrink-0">
+              <motion.button
+                key={r.id}
+                onClick={() => onOpenModal(r)}
+                className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border touch-manipulation shadow-soft"
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.4 + i * 0.1 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 ${
+                  i === 0 ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
+                }`}>
                   {i + 1}
                 </div>
-                <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 shadow-soft">
                   <RestaurantPoster restaurant={r} className="w-full h-full" />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 text-left">
                   <p className="font-serif text-sm font-semibold truncate">{r.name}</p>
                   <p className="text-xs text-muted-foreground">{cnt} garfado{cnt !== 1 ? 's' : ''} esta semana</p>
                 </div>
-              </button>
+              </motion.button>
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Sugestões */}
