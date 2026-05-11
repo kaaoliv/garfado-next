@@ -34,6 +34,17 @@ export default function GarfadoApp() {
   const [viewingUserId, setViewingUserId] = useState<string | null>(null)
   const [hasLoaded, setHasLoaded] = useState(false)
 
+  // Quando volta para aba do mapa, força o Leaflet a recalcular tamanho
+  // (o container ficou com display:none e o Leaflet perde as dimensões)
+  useEffect(() => {
+    if (tab === 'mapa') {
+      setTimeout(() => {
+        const mapInstance = (window as any).__garfadoMap
+        if (mapInstance) mapInstance.invalidateSize({ animate: false })
+      }, 50)
+    }
+  }, [tab])
+
   if (loading && !user) return <LoadingScreen />
   if (!user) return <AuthScreen />
   if (onboarding) return <OnboardingScreen />
