@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { createClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -12,7 +14,8 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const username = params.username.replace('@', '')
+  const username = (params.username || '').replace('@', '')
+  if (!username) notFound()
   const { data: profile } = await supabase
     .from('profiles')
     .select('name, username, avatar_url')
@@ -33,7 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PublicProfile({ params }: Props) {
-  const username = params.username.replace('@', '')
+  const username = (params.username || '').replace('@', '')
+  if (!username) notFound()
 
   const { data: profile } = await supabase
     .from('profiles')
