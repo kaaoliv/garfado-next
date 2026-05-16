@@ -29,7 +29,9 @@ export function StatsScreen({ onUpgrade, isPro }: StatsScreenProps) {
       const vals = [r?.Comida, r?.Atendimento, r?.Limpeza].filter(Boolean)
       return vals.length > 0 ? vals.reduce((a: number, b: number) => a + b, 0) / vals.length : null
     }).filter(Boolean) as number[]
-    const avgRating = ratingVals.length > 0 ? (ratingVals.reduce((a, b) => a + b, 0) / ratingVals.length).toFixed(1) : null
+    const avgRating = ratingVals.length > 0
+      ? (ratingVals.reduce((a, b) => a + b, 0) / ratingVals.length).toFixed(1)
+      : null
 
     const months: Record<string, number> = {}
     Object.entries(visitDates).forEach(([id, date]) => {
@@ -66,7 +68,6 @@ export function StatsScreen({ onUpgrade, isPro }: StatsScreenProps) {
       const parts = r.addr.split('-')
       return parts.length > 1 ? parts[parts.length - 2].trim() : r.addr.split(',')[0]
     }))
-
     const loyalCount = visitedList.filter(r => (visits[r.id] || 0) > 1).length
     const loyalPct = visitedList.length > 0 ? Math.round(loyalCount / visitedList.length * 100) : 0
 
@@ -244,9 +245,6 @@ export function StatsScreen({ onUpgrade, isPro }: StatsScreenProps) {
           )}
         </div>
       )}
-    </div>
-
-    </div>
     </div>
   )
 }
