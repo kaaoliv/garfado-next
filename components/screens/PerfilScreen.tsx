@@ -12,6 +12,8 @@ import { Camera, LogOut, Lock, Globe, Plus, X, ChevronRight, Settings, Share2 } 
 import { ConfigScreen } from './ConfigScreen'
 import { StatsScreen } from './StatsScreen'
 import { PaywallScreen } from './PaywallScreen'
+import { NotificationsScreen } from './NotificationsScreen'
+import { requestPushPermission } from '@/lib/notifications'
 import { useI18n } from '@/lib/i18n'
 import type { Restaurant } from '@/lib/types'
 
@@ -36,7 +38,23 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
   const [showConfig, setShowConfig] = useState(false)
   const [showPaywall, setShowPaywall] = useState(false)
   const [showFollowModal, setShowFollowModal] = useState<'following' | 'followers' | null>(null)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [notifEnabled, setNotifEnabled] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
   const [followProfiles, setFollowProfiles] = useState<any[]>([])
+
+  useEffect(() => {
+    // Verificar se notificações estão habilitadas
+    if ('Notification' in window) {
+      setNotifEnabled(Notification.permission === 'granted')
+    }
+    // Carregar contagem de não lidas
+    if (user) {
+      import('@/lib/notifications').then(({ getNotifications }) => {
+        getNotifications(user.id).then(ns => setUnreadCount(ns.filter((n: any) => !n.read).length))
+      })
+    }
+  }, [user])
 
   useEffect(() => {
     if (!showFollowModal) return
@@ -700,6 +718,11 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
             )}
           </div>
         </div>
+      )}
+
+      {/* Notificações */}
+      {showNotifications && (
+        <NotificationsScreen onClose={() => { setShowNotifications(false); setUnreadCount(0) }} />
       )}
 
       {/* Paywall */}
