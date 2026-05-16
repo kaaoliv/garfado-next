@@ -242,6 +242,12 @@ const translations: Record<Locale, Record<string, string>> = {
     'stats.most_visited': 'Mais visitado',
     'stats.visits_label': 'visitas',
     'stats.fav_day': 'Dia favorito',
+    'stats.taste_profile': 'Taste Profile',
+    'stats.loyalty': 'Fidelidade',
+    'stats.loyalty_desc': 'volta aos favoritos',
+    'stats.explorer': 'Explorador',
+    'stats.regions': 'regiões visitadas',
+    'stats.best_cuisine': 'Melhor avaliadas por culinária',
     // Paywall
     'paywall.subtitle': 'Leve sua experiência ao próximo nível',
     'paywall.benefit1': 'Estatísticas avançadas e gráficos',
