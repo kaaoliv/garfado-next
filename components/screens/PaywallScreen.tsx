@@ -31,7 +31,7 @@ export function PaywallScreen({ onClose, onSubscribe }: PaywallScreenProps) {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-[430px] bg-card rounded-t-3xl border-t border-border overflow-hidden"
+        className="w-full max-w-[430px] bg-card rounded-t-3xl border-t border-border overflow-hidden flex flex-col"
         style={{ maxHeight: '90dvh' }}
       >
         {/* Handle */}
@@ -43,7 +43,7 @@ export function PaywallScreen({ onClose, onSubscribe }: PaywallScreenProps) {
           <X className="w-4 h-4 text-muted-foreground" />
         </button>
 
-        <div className="px-6 pb-8 overflow-y-auto">
+        <div className="px-6 pb-8 overflow-y-auto flex-1 scrollbar-hide">
           {/* Hero */}
           <div className="flex flex-col items-center gap-3 mb-6">
             <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center">
