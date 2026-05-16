@@ -14,7 +14,7 @@ interface HomeScreenProps {
 }
 
 export function HomeScreen({ onOpenModal }: HomeScreenProps) {
-  const { restaurants, visits, friendVisits, searchResults, searchPlaces, clearSearch, addFromPlaces } = useApp()
+  const { restaurants, visits, ratings, friendVisits, searchResults, searchPlaces, clearSearch, addFromPlaces } = useApp()
   const { t } = useI18n()
   const [query, setQuery] = useState('')
   const [searching, setSearching] = useState(false)
