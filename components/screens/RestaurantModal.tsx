@@ -18,7 +18,7 @@ interface RestaurantModalProps {
 }
 
 export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
-  const { visits, ratings, likes, visitDates, addVisit, toggleLike, setRating, setNote, setDelivery,
+  const { visits, ratings, likes, visitDates, addVisit, toggleLike, setRating, setNote, setDelivery, profile,
     loadReviews, submitReview, deleteReview, user, friendVisits, uploadRestaurantPhoto, restaurants } = useApp()
   // Usar restaurante ao vivo do estado para refletir atualizações (ex: foto nova)
   const r = restaurants.find(x => x.id === restaurant.id) || restaurant
@@ -27,6 +27,10 @@ export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
   const [celebrating, setCelebrating] = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [showPhotoConsent, setShowPhotoConsent] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [editName, setEditName] = useState(r.name)
+  const [editAddr, setEditAddr] = useState(r.addr)
+  const [editRede, setEditRede] = useState(r.rede)
   const photoInputRef = useRef<HTMLInputElement>(null)
   const [priceLevel, setPriceLevel] = useState<number>(() => ratings[r.id]?.price_level || 0)
   const [isDelivery, setIsDelivery] = useState<boolean>(() => ratings[r.id]?.delivery || false)
@@ -194,6 +198,42 @@ export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
             </button>
             <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
 
+            {/* Modal de edição (admin) */}
+            {editing && (
+              <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70" onClick={() => setEditing(false)}>
+                <div className="w-full max-w-[430px] bg-card rounded-t-3xl p-6 border-t border-border" onClick={e => e.stopPropagation()}>
+                  <div className="w-10 h-1 bg-border rounded-full mx-auto mb-4" />
+                  <h3 className="font-serif text-base font-bold mb-4">Editar restaurante</h3>
+                  <div className="flex flex-col gap-3 mb-5">
+                    <input value={editName} onChange={e => setEditName(e.target.value)}
+                      className="w-full bg-secondary rounded-xl px-4 py-3 text-sm text-foreground border border-border"
+                      placeholder="Nome" />
+                    <input value={editAddr} onChange={e => setEditAddr(e.target.value)}
+                      className="w-full bg-secondary rounded-xl px-4 py-3 text-sm text-foreground border border-border"
+                      placeholder="Endereço" />
+                    <input value={editRede} onChange={e => setEditRede(e.target.value)}
+                      className="w-full bg-secondary rounded-xl px-4 py-3 text-sm text-foreground border border-border"
+                      placeholder="Culinária (ex: Japonesa)" />
+                  </div>
+                  <div className="flex gap-3">
+                    <button onClick={() => setEditing(false)}
+                      className="flex-1 py-3 rounded-xl border border-border text-sm text-muted-foreground touch-manipulation">
+                      Cancelar
+                    </button>
+                    <button onClick={async () => {
+                      const { supabase } = await import('@/lib/supabase')
+                      await supabase.from('restaurants').update({ name: editName, addr: editAddr, rede: editRede }).eq('id', r.id)
+                      toast.success('Restaurante atualizado!')
+                      setEditing(false)
+                    }}
+                      className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold touch-manipulation">
+                      Salvar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Modal de consentimento de foto */}
             {showPhotoConsent && (
               <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowPhotoConsent(false)}>
@@ -256,6 +296,21 @@ export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
 
             {/* Secondary actions */}
             <div className="flex gap-3">
+              <button onClick={() => {
+                const text = `Garfei ${r.name}${(ratings[r.id] as any)?.Comida ? ` ★ ${(ratings[r.id] as any).Comida}/5` : ''} no Garfado! 🍴`
+                const url = `https://garfado.com.br`
+                if (navigator.share) {
+                  navigator.share({ title: 'Garfado', text, url })
+                } else {
+                  navigator.clipboard.writeText(`${text} ${url}`)
+                  toast.success('Copiado!')
+                }
+              }}
+                className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl bg-card border border-border touch-manipulation active:opacity-70 text-sm">
+                <span>🔗</span>
+                <span className="text-muted-foreground text-xs">{t('modal.share')}</span>
+              </button>
+
               <button onClick={() => toggleLike(r.id)}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-medium touch-manipulation ${liked ? 'border-pink-500 text-pink-500' : 'border-border text-muted-foreground'}`}>
                 <Heart className={`w-4 h-4 ${liked ? 'fill-pink-500' : ''}`} />
