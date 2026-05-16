@@ -32,7 +32,7 @@ interface Lista {
 
 export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) {
   const { profile, visits, visitDates, ratings, likes, achs, friends, followers,
-    restaurants, signOut, setProfile } = useApp()
+    restaurants, signOut, setProfile, user } = useApp()
 
   const [tab, setTab] = useState<'garfados' | 'listas' | 'conquistas' | 'stats'>('garfados')
   const [showConfig, setShowConfig] = useState(false)
