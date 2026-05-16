@@ -33,6 +33,8 @@ export function OnboardingScreen() {
   const { t } = useI18n()
   const [step, setStep] = useState(0) // 0,1,2 = slides, 3 = username
   const [username, setUsername] = useState('')
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null)
+  const checkTimer = useRef<any>(null)
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
   const [direction, setDirection] = useState(1)
@@ -140,12 +142,31 @@ export function OnboardingScreen() {
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">@</span>
                   <input
                     value={username}
-                    onChange={e => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                    onChange={async e => {
+                      const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '')
+                      setUsername(val)
+                      setUsernameAvailable(null)
+                      if (val.length >= 3) {
+                        clearTimeout(checkTimer.current)
+                        checkTimer.current = setTimeout(async () => {
+                          const { supabase } = await import('@/lib/supabase')
+                          const { data } = await supabase.from('profiles').select('id').eq('username', val).maybeSingle()
+                          setUsernameAvailable(!data)
+                        }, 600)
+                      }
+                    }}
                     placeholder="username"
                     className="w-full bg-card border border-border rounded-xl pl-8 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition-colors"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">{t('perfil.username_hint')}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">{t('perfil.username_hint')}</p>
+                  {username.length >= 3 && (
+                    <p className={`text-xs font-medium ${usernameAvailable === true ? 'text-primary' : usernameAvailable === false ? 'text-destructive' : 'text-muted-foreground'}`}>
+                      {usernameAvailable === true ? '✓ disponível' : usernameAvailable === false ? '✗ já em uso' : '...'}
+                    </p>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}

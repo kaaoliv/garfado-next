@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'garfado-v4'
+const CACHE_VERSION = 'garfado-v5'
 const STATIC_CACHE = `${CACHE_VERSION}-static`
 const MAP_CACHE = `${CACHE_VERSION}-map`
 const PHOTO_CACHE = `${CACHE_VERSION}-photos`

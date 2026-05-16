@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { sendNotification } from '@/lib/notifications'
 import type { Restaurant, Profile, Review, RankingEntry, PlaceResult, FeedItem } from '@/lib/types'
 import { GPLACES_KEY, detectRede } from '@/lib/constants'
 import type { User } from '@supabase/supabase-js'
