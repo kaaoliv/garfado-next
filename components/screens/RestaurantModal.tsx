@@ -400,7 +400,9 @@ export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
                   const cur = (mr as any)[cat] || 0
                   return (
                     <div key={cat} className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground w-24 flex-shrink-0">{t(`modal.${cat.toLowerCase()}`) || cat}</span>
+                      <span className="text-xs text-muted-foreground w-24 flex-shrink-0">
+                        {t(({'Comida':'modal.food','Atendimento':'modal.service','Limpeza':'modal.cleanliness','Banheiro':'modal.bathroom','Embalagem':'modal.packaging','Pontualidade':'modal.punctuality'} as any)[cat] || cat)}
+                      </span>
                       <div className="flex gap-1">
                         {[1,2,3,4,5].map(n => (
                           <button key={n}
