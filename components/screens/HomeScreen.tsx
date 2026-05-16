@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Search, X } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { RestaurantPoster } from '@/components/shared/RestaurantPoster'
