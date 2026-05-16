@@ -307,7 +307,6 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
         >
           {[
             { label: t('perfil.garfados'), value: garfCount, onClick: undefined },
-            { label: t('perfil.visits'), value: totalVisits, onClick: undefined },
             { label: t('perfil.following'), value: friends.length, onClick: () => setShowFollowModal('following') },
             { label: t('perfil.followers'), value: followers.length, onClick: () => setShowFollowModal('followers') },
           ].map((s, i) => (
