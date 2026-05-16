@@ -147,7 +147,7 @@ export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
             </div>
             {/* Partículas */}
             {['🍴','⭐','✨','🎊','💚'].map((emoji, i) => (
-              <div key={rv.id || rv.user_id} className="absolute text-xl"
+              <div key={emoji} className="absolute text-xl"
                 style={{
                   left: `${15 + i * 17}%`,
                   top: '30%',
@@ -347,7 +347,7 @@ export function RestaurantModal({ restaurant, onClose }: RestaurantModalProps) {
                   {fw.map((f, i) => {
                     const ini = (f.name || '?').charAt(0).toUpperCase()
                     return (
-                      <div key={rv.id || rv.user_id} className="flex items-center gap-2 bg-secondary rounded-full px-3 py-1.5">
+                      <div key={f.name || i} className="flex items-center gap-2 bg-secondary rounded-full px-3 py-1.5">
                         <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[9px] font-bold text-primary-foreground overflow-hidden">
                           {f.avatar ? <img src={f.avatar} alt="" className="w-full h-full object-cover" /> : ini}
                         </div>
