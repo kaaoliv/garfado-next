@@ -418,29 +418,39 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
                       </div>
                     </div>
 
-                    {/* Mais visitados */}
-                    {(() => {
-                      const top = [...allVisited].sort((a, b) => (visits[b.id] || 0) - (visits[a.id] || 0)).filter(r => (visits[r.id] || 0) > 1).slice(0, 4)
-                      if (top.length === 0) return null
-                      return (
-                        <div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-2">{t('perfil.most_visited')}</p>
-                          <div className="grid grid-cols-4 gap-1.5">
-                            {top.map(r => (
-                              <button key={r.id} onClick={() => onOpenModal(r)}
-                                className="relative rounded-lg overflow-hidden touch-manipulation active:opacity-80"
-                                style={{ aspectRatio: '2/3' }}>
-                                <RestaurantPoster restaurant={r} className="w-full h-full" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                                <div className="absolute bottom-1 right-1 bg-primary text-primary-foreground text-[8px] px-1 py-0.5 rounded-full font-bold">
-                                  {visits[r.id]}x
-                                </div>
-                              </button>
-                            ))}
+                    {/* Mais visitados — Pro */}
+                    {isPro ? (
+                      (() => {
+                        const top = [...allVisited].sort((a, b) => (visits[b.id] || 0) - (visits[a.id] || 0)).filter(r => (visits[r.id] || 0) > 1).slice(0, 4)
+                        if (top.length === 0) return null
+                        return (
+                          <div>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-2">{t('perfil.most_visited')}</p>
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {top.map(r => (
+                                <button key={r.id} onClick={() => onOpenModal(r)}
+                                  className="relative rounded-lg overflow-hidden touch-manipulation active:opacity-80"
+                                  style={{ aspectRatio: '2/3' }}>
+                                  <RestaurantPoster restaurant={r} className="w-full h-full" />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                </button>
+                              ))}
+                            </div>
                           </div>
+                        )
+                      })()
+                    ) : (
+                      <button onClick={() => setShowPaywall(true)}
+                        className="w-full flex items-center justify-between bg-secondary rounded-xl px-4 py-3 touch-manipulation">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm">🏆</span>
+                          <span className="text-sm text-muted-foreground">{t('perfil.most_visited')}</span>
                         </div>
-                      )
-                    })()}
+                        <div className="flex items-center gap-1 bg-primary/20 text-primary rounded-full px-2 py-0.5">
+                          <span className="text-[10px] font-bold">PRO</span>
+                        </div>
+                      </button>
+                    )}
 
                     {/* Ver todos — botão Letterboxd style */}
                     <button onClick={() => setShowAllGarfados(true)}

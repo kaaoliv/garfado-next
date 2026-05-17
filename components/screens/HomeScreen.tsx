@@ -220,11 +220,7 @@ export function HomeScreen({ onOpenModal }: HomeScreenProps) {
                       <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
                         <ForkIcon className="w-2.5 h-2.5 text-primary-foreground" />
                       </div>
-                      {(visits[r.id] || 0) > 1 && (
-                        <div className="absolute bottom-6 right-1.5 bg-black/70 text-primary text-[8px] px-1.5 py-0.5 rounded-full font-bold">
-                          {visits[r.id]}x
-                        </div>
-                      )}
+
                       <div className="absolute bottom-0 left-0 right-0 p-2">
                         <h3 className="font-serif text-[10px] font-semibold text-white leading-tight truncate">{r.name}</h3>
                       </div>

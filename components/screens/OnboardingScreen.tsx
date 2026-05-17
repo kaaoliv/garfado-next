@@ -6,6 +6,7 @@ import { useApp } from '@/lib/context'
 import { ForkIcon } from '@/components/shared/ForkIcon'
 import { toast } from 'sonner'
 import { ChevronRight } from 'lucide-react'
+import { AuthScreen } from './AuthScreen'
 
 const slides = [
   {
@@ -32,6 +33,7 @@ export function OnboardingScreen() {
   const { finishOnboarding } = useApp()
   const { t } = useI18n()
   const [step, setStep] = useState(0) // 0,1,2 = slides, 3 = username
+  const [showAuth, setShowAuth] = useState(false)
   const [username, setUsername] = useState('')
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null)
   const checkTimer = useRef<any>(null)
@@ -62,6 +64,8 @@ export function OnboardingScreen() {
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
   }
+
+  if (showAuth) return <AuthScreen />
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -194,7 +198,7 @@ export function OnboardingScreen() {
             )}
             {step === 0 && (
               <button
-                onClick={() => setStep(3)}
+                onClick={() => setShowAuth(true)}
                 className="w-full py-3 text-sm text-muted-foreground touch-manipulation"
               >
                 {t('onboarding.skip')}
