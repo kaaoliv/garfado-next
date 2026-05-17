@@ -374,10 +374,6 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
                       style={{ aspectRatio: '2/3' }}>
                       <RestaurantPoster restaurant={r} className="w-full h-full" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      {(visits[r.id] || 0) > 1 && (
-                        <div className="absolute bottom-1 right-1 bg-black/80 text-primary text-[8px] px-1 py-0.5 rounded-full font-bold">
-                          {visits[r.id]}x
-                        </div>
                       )}
                     </button>
                   ))}
@@ -408,10 +404,6 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
                             style={{ aspectRatio: '2/3' }}>
                             <RestaurantPoster restaurant={r} className="w-full h-full" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                            {(visits[r.id] || 0) > 1 && (
-                              <div className="absolute bottom-1 right-1 bg-black/80 text-primary text-[8px] px-1 py-0.5 rounded-full font-bold">
-                                {visits[r.id]}x
-                              </div>
                             )}
                           </button>
                         ))}
