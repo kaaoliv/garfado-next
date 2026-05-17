@@ -374,7 +374,6 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
                       style={{ aspectRatio: '2/3' }}>
                       <RestaurantPoster restaurant={r} className="w-full h-full" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      )}
                     </button>
                   ))}
                 </div>
@@ -404,7 +403,6 @@ export function PerfilScreen({ onOpenModal, onViewProfile }: PerfilScreenProps) 
                             style={{ aspectRatio: '2/3' }}>
                             <RestaurantPoster restaurant={r} className="w-full h-full" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                            )}
                           </button>
                         ))}
                       </div>
