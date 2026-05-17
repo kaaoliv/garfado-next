@@ -140,7 +140,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const [feedR, fvR, rxR, myRxR, profR, visR] = await Promise.all([
       supabase.from('visits').select('*, profiles(id,name,username,avatar_url)').in('user_id', friends).order('updated_at', { ascending: false }).limit(40),
       supabase.from('visits').select('restaurant_id,count,user_id,profiles(name,avatar_url)').in('user_id', friends),
-      supabase.from('reactions').select('feed_key,count').eq('type', 'fire'),
+      supabase.from('reactions').select('feed_key').eq('type', 'fire'),
       supabase.from('reactions').select('feed_key').eq('user_id', uid),
       supabase.from('profiles').select('id,name,username,avatar_url,is_pro,is_admin').in('id', allIds),
       supabase.from('visits').select('user_id,restaurant_id').in('user_id', allIds),
