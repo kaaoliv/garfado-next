@@ -13,16 +13,19 @@ interface MapaScreenProps {
 
 async function geocodeAddress(addr: string, name: string): Promise<[number, number] | null> {
   try {
-    const q = encodeURIComponent(`${addr}, Brasil`)
+    // Tentar sem restrição de país primeiro (funciona para qualquer país)
+    const q = encodeURIComponent(`${name}, ${addr}`)
     const resp = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=br`,
+      `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
       { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'GarfadoApp/1.0' } }
     )
     const data = await resp.json()
     if (data?.[0]) return [parseFloat(data[0].lat), parseFloat(data[0].lon)]
-    const q2 = encodeURIComponent(`${name}, ${addr.split(',').slice(-2).join(',')}, Brasil`)
+
+    // Fallback: só o endereço sem restrição de país
+    const q2 = encodeURIComponent(addr)
     const resp2 = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${q2}&format=json&limit=1&countrycodes=br`,
+      `https://nominatim.openstreetmap.org/search?q=${q2}&format=json&limit=1`,
       { headers: { 'Accept-Language': 'pt-BR', 'User-Agent': 'GarfadoApp/1.0' } }
     )
     const data2 = await resp2.json()
@@ -63,7 +66,7 @@ export function MapaScreen({ onOpenModal }: MapaScreenProps) {
 
   useEffect(() => {
     const loadCoords = async () => {
-      const CACHE_KEY = 'garfado_geocache_v2'
+      const CACHE_KEY = 'garfado_geocache_v3'
       const cached: Record<number, { lat: number; lng: number; ts: number }> =
         JSON.parse(localStorage.getItem(CACHE_KEY) || '{}')
       const CACHE_TTL = 30 * 24 * 60 * 60 * 1000
