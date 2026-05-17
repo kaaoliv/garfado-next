@@ -10,11 +10,14 @@ const supabase = createClient(
 )
 
 interface Props {
-  params: { username: string }
+  params: Promise<{ username: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const username = params.username.replace('@', '')
+  const { username: rawUsername } = await params
+  const username = (rawUsername || '').replace('@', '')
+  if (!username) return { title: 'Perfil não encontrado — Garfado' }
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('name, username, avatar_url')
@@ -35,7 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PublicProfile({ params }: Props) {
-  const username = (params.username || '').replace('@', '')
+  const { username: rawUsername } = await params
+  const username = (rawUsername || '').replace('@', '')
   if (!username) notFound()
 
   const { data: profile } = await supabase
@@ -74,7 +78,7 @@ export default async function PublicProfile({ params }: Props) {
           <line x1="9" y1="28" x2="9" y2="47" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round"/>
           <circle cx="9" cy="38" r="4" fill="#4ade80"/>
         </svg>
-        <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>garfado</span>
+        <span style={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '-0.02em' }}>garfado</span>
       </div>
 
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem 1.5rem' }}>
@@ -104,7 +108,7 @@ export default async function PublicProfile({ params }: Props) {
           ))}
         </div>
 
-        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Últimos garfados</h2>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: '#f0ede8' }}>Últimos garfados</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: '2rem' }}>
           {visited.map(r => (
             <div key={r.id} style={{ borderRadius: 10, overflow: 'hidden', aspectRatio: '3/4', position: 'relative', background: '#161a20' }}>
