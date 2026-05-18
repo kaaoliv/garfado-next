@@ -3,8 +3,6 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-
-  // Só intercepta a rota raiz
   if (pathname !== '/') return NextResponse.next()
 
   const ua = request.headers.get('user-agent') || ''
