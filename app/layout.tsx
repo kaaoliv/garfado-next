@@ -6,6 +6,7 @@ import { I18nProvider } from '@/lib/i18n'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'sonner'
 import { ServiceWorkerRegister } from '@/components/shared/ServiceWorkerRegister'
+import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
   title: 'Garfado — Registre os restaurantes que você foi',
@@ -33,18 +34,31 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: 'cover', // permite conteúdo atrás do notch/home indicator
+  viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#f8f9fa' },
     { media: '(prefers-color-scheme: dark)', color: '#0f1117' },
   ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers()
+  const pathname = headersList.get('x-invoke-path') || headersList.get('x-pathname') || ''
+  const isLanding = pathname === '/landing' || pathname.startsWith('/landing')
+
+  if (isLanding) {
+    return (
+      <html lang="pt-BR" suppressHydrationWarning>
+        <body style={{ margin: 0, padding: 0, background: '#080b0f' }}>
+          {children}
+        </body>
+      </html>
+    )
+  }
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className="bg-background flex items-center justify-center overflow-hidden transition-colors duration-300" style={{ height: "100dvh" }}>
-
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -54,10 +68,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <div className="w-full max-w-[430px] relative bg-background flex flex-col overflow-hidden transition-colors duration-300" style={{ height: "100dvh" }}>
             <I18nProvider>
-            <AppProvider>
-              {children}
-            </AppProvider>
-          </I18nProvider>
+              <AppProvider>
+                {children}
+              </AppProvider>
+            </I18nProvider>
             <ServiceWorkerRegister />
             <Toaster position="top-center" />
           </div>
