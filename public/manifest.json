@@ -19,7 +19,22 @@
     "social",
     "lifestyle"
   ],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "899x1750",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Descubra, avalie e garfe restaurantes como nunca"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "941x1672",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Complete franquias e se torne um hunter"
+    }
+  ],
   "icons": [
     {
       "src": "/icon-192x192.png",
