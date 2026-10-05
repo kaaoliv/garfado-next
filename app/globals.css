@@ -18,6 +18,18 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* JobHunter é uma área web desktop independente do shell mobile do Garfado */
+body:has(.jobhunter-page) {
+  overflow: auto;
+}
+
+body:has(.jobhunter-page) > div {
+  width: 100%;
+  max-width: none;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
 /* Scrollbar invisível mas funcional */
 .scrollbar-hide {
   -ms-overflow-style: none;
