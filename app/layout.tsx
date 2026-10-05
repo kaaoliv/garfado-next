@@ -45,8 +45,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const headersList = await headers()
   const pathname = headersList.get('x-invoke-path') || headersList.get('x-pathname') || ''
   const isLanding = pathname === '/landing' || pathname.startsWith('/landing')
+  const isJobHunter = pathname === '/jobhunter' || pathname.startsWith('/jobhunter/')
 
-  if (isLanding) {
+  if (isLanding || isJobHunter) {
     return (
       <html lang="pt-BR" suppressHydrationWarning>
         <body style={{ margin: 0, padding: 0, background: '#080b0f' }}>
