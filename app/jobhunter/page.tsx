@@ -32,7 +32,7 @@ export default function JobHunterPage() {
   }), [jobs, query, minScore, onlyUsd, onlyBrazil]);
 
   return (
-    <main className="min-h-screen bg-[#0f1117] text-white px-5 py-8 md:px-10">
+    <main className="jobhunter-page min-h-screen bg-[#0f1117] text-white px-5 py-8 md:px-10">
       <div className="mx-auto max-w-6xl">
         <header className="flex flex-col gap-5 border-b border-white/10 pb-7 md:flex-row md:items-end md:justify-between">
           <div>
