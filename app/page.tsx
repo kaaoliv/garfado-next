@@ -84,6 +84,15 @@ export default function GarfadoApp() {
       {/* Modal */}
       {modal && <RestaurantModal restaurant={modal} onClose={() => setModal(null)} />}
 
+      {/* Acesso discreto ao JobHunter — propositalmente no final da interface */}
+      <a
+        href="/jobhunter"
+        aria-label="JobHunter"
+        className="fixed bottom-0 left-1/2 z-50 -translate-x-1/2 px-3 py-1 text-[9px] text-transparent hover:text-white/30 focus:text-white/50"
+      >
+        •
+      </a>
+
       {/* Perfil de outro usuário */}
       {viewingUserId && (
         <UserProfileScreen
