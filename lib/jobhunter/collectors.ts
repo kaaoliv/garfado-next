@@ -1,9 +1,22 @@
 import type { Job } from "./types";
 import { scoreJob } from "./score";
 
-function csv(name: string) {
-  return (process.env[name] ?? "").split(",").map(x => x.trim()).filter(Boolean);
+function csv(name: string, fallback: string[] = []) {
+  const configured = (process.env[name] ?? "").split(",").map(x => x.trim()).filter(Boolean);
+  return configured.length ? configured : fallback;
 }
+
+const DEFAULT_LEVER_SITES = ["superside", "oneimpression"];
+const DEFAULT_ASHBY_BOARDS = [
+  "acentecom",
+  "the-global-talent-co",
+  "darkroom",
+  "myedspacecareers",
+  "newform",
+  "tempo",
+  "superpower",
+  "everai"
+];
 
 async function fetchGreenhouse(board: string): Promise<Job[]> {
   const res = await fetch(`https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(board)}/jobs?content=true`, { next: { revalidate: 900 } });
@@ -46,8 +59,8 @@ async function fetchAshby(board: string): Promise<Job[]> {
 export async function collectJobs(): Promise<Job[]> {
   const [greenhouse, lever, ashby] = await Promise.all([
     Promise.all(csv("GREENHOUSE_BOARDS").map(fetchGreenhouse)),
-    Promise.all(csv("LEVER_SITES").map(fetchLever)),
-    Promise.all(csv("ASHBY_BOARDS").map(fetchAshby))
+    Promise.all(csv("LEVER_SITES", DEFAULT_LEVER_SITES).map(fetchLever)),
+    Promise.all(csv("ASHBY_BOARDS", DEFAULT_ASHBY_BOARDS).map(fetchAshby))
   ]);
   return [...greenhouse.flat(), ...lever.flat(), ...ashby.flat()]
     .sort((a, b) => b.matchScore - a.matchScore)
